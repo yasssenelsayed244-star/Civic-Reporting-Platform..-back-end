@@ -1,16 +1,15 @@
-# 🏙️ Civic Reporting Platform
+# 🏙️ Civic Reporting Platform — Backend
 
-A **full-stack web application** that lets citizens report infrastructure issues (potholes, broken street lights, water leaks, garbage) with photos and GPS map locations, track resolution status in real time, upvote reports to raise priority, and chat with a bilingual AI assistant.
+The **backend API server** for the Civic Reporting Platform. Built with Node.js and Express, it provides a RESTful API for managing citizen infrastructure reports, real-time notifications, AI-powered classification, and an admin dashboard.
 
-![Architecture](https://img.shields.io/badge/Architecture-Full--Stack-blue) ![Frontend](https://img.shields.io/badge/Frontend-React%2019-61dafb) ![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green) ![Database](https://img.shields.io/badge/DB-SQLite%20%2F%20PostgreSQL-orange) ![Realtime](https://img.shields.io/badge/Realtime-Socket.IO-black)
+![Backend](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-green) ![Database](https://img.shields.io/badge/DB-SQLite%20%2F%20PostgreSQL-orange) ![ORM](https://img.shields.io/badge/ORM-Sequelize-blue) ![Auth](https://img.shields.io/badge/Auth-JWT%20%2B%20bcrypt-red) ![Realtime](https://img.shields.io/badge/Realtime-Socket.IO-black) ![AI](https://img.shields.io/badge/AI-Google%20Gemini-yellow)
 
 ---
 
 ## 📑 Table of Contents
 
-- [Features](#-features)
 - [Tech Stack](#️-tech-stack)
-- [Backend Folder Structure](#-backend-folder-structure)
+- [Folder Structure](#-folder-structure)
 - [Getting Started](#-getting-started)
 - [Environment Variables](#-environment-variables)
 - [API Reference](#-api-reference)
@@ -20,52 +19,7 @@ A **full-stack web application** that lets citizens report infrastructure issues
 
 ---
 
-## ✨ Features
-
-### 👤 Citizens
-- **Create reports** with photo upload, AI category auto-classification, and an interactive map location picker
-- **Browse & filter** reports by status / category on a live map (Leaflet)
-- **Upvote** reports — higher engagement means higher priority
-- **Track status** with a full timeline of changes and admin notes
-- **Resolution feedback** — rate how well a reported issue was resolved
-- **Real-time notifications** via Socket.IO when report status changes
-- **AI chatbot** — answers platform & general questions, bilingual (Arabic / English)
-- **Leaderboard** — gamified trust score for active citizens
-- **Full i18n** — Arabic (RTL) & English UI
-
-### 🛡️ Admins
-- **Dashboard** with statistics (total reports, resolution rate, charts via Recharts)
-- **Manage all reports** — update status (`pending → in_progress → resolved / rejected`) with notes
-- **Role-based access control** (`citizen` / `supervisor` / `admin`)
-- Default admin account seeded automatically on first run
-
-### 🔐 Security
-- JWT authentication (passwords hashed with bcrypt)
-- Rate limiting on auth & chat endpoints (express-rate-limit)
-- Security headers via Helmet
-- CORS restricted to the frontend origin
-- Role-based middleware guards
-
----
-
 ## 🛠️ Tech Stack
-
-### Frontend
-| Category | Technology |
-|---|---|
-| **UI Library** | React 19 |
-| **Build Tool** | Vite 8 |
-| **Styling** | Tailwind CSS 4 (+ custom CSS modules per page) |
-| **Routing** | React Router DOM 7 |
-| **HTTP Client** | Axios (with JWT interceptors) |
-| **Maps** | Leaflet 1.9 + React-Leaflet 5 |
-| **Charts** | Recharts 3 |
-| **Icons** | Lucide React |
-| **i18n** | i18next + react-i18next (ar/en) |
-| **Real-time** | Socket.IO Client 4 |
-| **Linting** | OxLint |
-
-### Backend
 
 | Category | Package | Version | Description |
 |---|---|---|---|
@@ -84,11 +38,11 @@ A **full-stack web application** that lets citizens report infrastructure issues
 | **File Uploads** | Multer (`multer`) | `^1.4.5-lts.1` | Multipart/form-data image upload handler with local `/uploads` storage |
 | **Unique IDs** | UUID (`uuid`) | `^10.0.0` | UUID v4 generation for primary keys and uploaded file names |
 | **Security Headers** | Helmet (`helmet`) | `^8.0.0` | HTTP security headers to protect against common web vulnerabilities |
-| **CORS** | CORS (`cors`) | `^2.8.5` | Cross-Origin Resource Sharing restricted to the frontend origin |
+| **CORS** | CORS (`cors`) | `^2.8.5` | Cross-Origin Resource Sharing policy configuration |
 | **Rate Limiting** | Express Rate Limit (`express-rate-limit`) | `^7.4.0` | Request throttling on auth, chat, and report creation endpoints |
 | **Environment Config** | Dotenv (`dotenv`) | `^16.4.5` | Loads secrets and configuration from the `.env` file |
 
-#### 📦 Backend `package.json` Dependencies:
+#### 📦 `package.json` Dependencies:
 
 ```json
 {
@@ -116,14 +70,9 @@ A **full-stack web application** that lets citizens report infrastructure issues
 }
 ```
 
-### Root Tooling
-| Category | Technology |
-|---|---|
-| **Process Manager** | Concurrently (runs backend + frontend together) |
-
 ---
 
-## 📁 Backend Folder Structure
+## 📁 Folder Structure
 
 ```
 backend/
@@ -227,23 +176,20 @@ backend/
 - **Node.js** ≥ 18
 - npm (comes with Node)
 
-### 1. Clone & install
+### 1. Install dependencies
 
 ```bash
-git clone <repo-url>
-cd "Civic  Reporting Platform"
-
-npm run install:all
-# installs: root (concurrently) + backend deps + frontend deps
+cd backend
+npm install
 ```
 
 ### 2. Configure environment
 
 ```bash
-cp backend/.env.example backend/.env
+cp .env.example .env
 ```
 
-Then edit `backend/.env`:
+Then edit `.env`:
 
 ```env
 PORT=5000
@@ -263,16 +209,14 @@ GEMINI_MODEL=gemini-2.5-flash
 ### 3. Run
 
 ```bash
-npm run start:dev
+npm run dev
 ```
 
-This starts both servers with concurrently:
-- 🔧 Backend API → http://localhost:5000
-- 🎨 Frontend (Vite) → http://localhost:5173
+The backend API will be running at → http://localhost:5000
 
 ### 🔑 Default admin account
 
-Created automatically on first backend start:
+Created automatically on first start:
 
 ```
 Email:    admin@civic.com
@@ -293,7 +237,7 @@ Password: admin123
 | `GEMINI_API_KEY` | No | Enables real AI chat/classification (offline fallback if empty) |
 | `GEMINI_MODEL` | No | Gemini model name (default `gemini-2.5-flash`) |
 
-Full list with production options (Cloudinary, Anthropic, JWT refresh tokens) in [`backend/.env.example`](backend/.env.example).
+Full list with production options (Cloudinary, Anthropic, JWT refresh tokens) in [`.env.example`](.env.example).
 
 ---
 
@@ -386,22 +330,14 @@ The same service also powers:
 
 ## 📜 Available Scripts
 
-| Location | Script | Description |
-|---|---|---|
-| root | `npm run start:dev` | Run backend + frontend together |
-| root | `npm run start:backend` | Backend only |
-| root | `npm run start:frontend` | Frontend only |
-| root | `npm run install:all` | Install all workspaces |
-| backend | `npm run dev` | Backend with auto-restart (`node --watch`) |
-| backend | `npm start` | Production start |
-| backend | `npm run migrate` | Run Sequelize migrations |
-| backend | `npm run migrate:undo` | Undo last migration |
-| backend | `npm run seed` | Run database seeders |
-| backend | `npm run db:reset` | Undo all migrations → migrate → seed |
-| frontend | `npm run dev` | Vite dev server (hot reload) |
-| frontend | `npm run build` | Production build |
-| frontend | `npm run preview` | Preview production build |
-| frontend | `npm run lint` | Lint with OxLint |
+| Script | Description |
+|---|---|
+| `npm run dev` | Start with auto-restart (`node --watch`) |
+| `npm start` | Production start |
+| `npm run migrate` | Run Sequelize migrations |
+| `npm run migrate:undo` | Undo last migration |
+| `npm run seed` | Run database seeders |
+| `npm run db:reset` | Undo all migrations → migrate → seed |
 
 ---
 
